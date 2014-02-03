@@ -1,4 +1,6 @@
 import keystoneclient.v2_0.client as ksclient
+import novaclient.v1_1.client as nvclient
+import glanceclient.v2.client as glanceclient
 import os
 
 def get_keystone_creds():
@@ -23,5 +25,16 @@ nova_creds = get_nova_creds()
 keystone = ksclient.Client(**keystone_creds)
 glance_endpoint = keystone.service_catalog.url_for(service_type='image',
                                                    endpoint_type='publicURL')
-nova = nvclient.Client(**creds)
+glance = glanceclient.Client(glance_endpoint, token=keystone.auth_token)
+images = glance.images.list()
+
+nova = nvclient.Client(**nova_creds)
 nova.servers.list()
+
+for image in glance.images.list():
+    if "ubuntu" in i["name"]:
+        print "Found image named ubuntu. Creating instance... ", i
+        flavor = novaclient.flavors.find(name="m1.micro")
+        instance = novaclient.servers.create(name="Test Script Server", image=i, flavor=flavor)
+        break
+
