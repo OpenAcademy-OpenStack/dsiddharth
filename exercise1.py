@@ -31,7 +31,7 @@ images = glance.images.list()
 nova = nvclient.Client(**nova_creds)
 nova.servers.list()
 
-for image in glance.images.list():
+for i in glance.images.list():
     if "ubuntu" in i["name"]:
         print "Found image named ubuntu. Creating instance... ", i
         flavor = novaclient.flavors.find(name="m1.micro")
